@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Happy Birthday Levi!</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#5c94fc">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' shape-rendering='crispEdges'><rect x='1' y='3' width='6' height='5' fill='%23e3342f'/><rect x='3' y='3' width='2' height='5' fill='%23ffe23a'/><rect x='1' y='1' width='2' height='2' fill='%23ffe23a'/><rect x='5' y='1' width='2' height='2' fill='%23ffe23a'/></svg>">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; touch-action: none;
+    overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  body { font-family: 'Press Start 2P', 'Courier New', monospace; color: #fff; line-height: 1.7; }
+  #game { position: fixed; left: 0; top: 0; display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+
+  /* ---------- overlay screens ---------- */
+  #ui { position: fixed; inset: 0; pointer-events: none; }
+  .screen { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 20px 18px calc(20px + env(safe-area-inset-bottom)); pointer-events: auto; overflow-y: auto; }
+  .screen.on { display: flex; }
+  .screen.dim { background: rgba(0, 0, 0, .55); }
+  .screen.dim-light { background: linear-gradient(rgba(0,0,0,.15), rgba(0,0,0,.6)); }
+  .card { background: #1a1a2e; border: 4px solid #fff; box-shadow: 0 0 0 4px #1a1a2e, 0 0 0 8px #fff, 0 12px 0 8px #000;
+    padding: 22px 18px; max-width: 360px; width: 100%; }
+  h1, h2, h3 { margin: 0 0 14px; line-height: 1.5; }
+  h1 { font-size: clamp(22px, 7vw, 34px); text-shadow: 4px 4px 0 #000; }
+  h2 { font-size: clamp(16px, 5.5vw, 26px); text-shadow: 3px 3px 0 #000; }
+  h3 { font-size: 12px; color: #ffe23a; }
+  p { font-size: 10px; margin: 0 0 12px; }
+  p.hint { color: #9ad7ff; font-size: 9px; }
+  p.sub { color: #ffe23a; }
+  p.tiny { font-size: 7px; opacity: .75; }
+  b { color: #ffe23a; }
+  .pbtn { font-family: inherit; font-size: 13px; color: #fff; background: #e3342f; border: 3px solid #fff; padding: 14px 18px; margin: 8px 0 0;
+    cursor: pointer; box-shadow: 0 6px 0 #7a1410; touch-action: manipulation; border-radius: 4px; }
+  .pbtn:active { transform: translateY(4px); box-shadow: 0 2px 0 #7a1410; }
+  .pbtn.small { font-size: 9px; padding: 10px 14px; background: #3b7dd8; box-shadow: 0 5px 0 #1d3f70; }
+  .pbtn.small:active { box-shadow: 0 1px 0 #1d3f70; }
+  .pbtn.ghost { background: #333; box-shadow: 0 5px 0 #000; }
+  .blink { animation: blink 1s steps(2, start) infinite; }
+  @keyframes blink { to { opacity: .3; } }
+  .rainbow { animation: hue 2.5s linear infinite; color: #ffe23a; }
+  @keyframes hue { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+  .bob { animation: bob 1.2s ease-in-out infinite; }
+  @keyframes bob { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
+  .bighead { width: min(46vw, 190px); height: auto; image-rendering: pixelated; image-rendering: crisp-edges; filter: drop-shadow(4px 6px 0 rgba(0,0,0,.5)); }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .signoff { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 2px 0 10px; }
+  .signoff p { margin: 0; }
+  .minihead { width: 68px; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; filter: drop-shadow(3px 4px 0 rgba(0,0,0,.5)); }
+  .card.light { background: #fff; color: #111; border-color: #111; box-shadow: 0 0 0 4px #fff, 0 0 0 8px #111, 0 12px 0 8px #000; }
+  .card.light h3 { color: #111; }
+  .card.light b { color: #0a7a3b; }
+  .pbtn:disabled { opacity: .6; transform: none; box-shadow: 0 6px 0 #7a1410; }
+  #s-store, #s-gotaway { justify-content: flex-end; padding-bottom: calc(6vh + env(safe-area-inset-bottom)); }
+  .cards { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+
+  /* ---------- gift cards ---------- */
+  .giftcard { display: flex; flex-direction: column; justify-content: space-between; width: min(80vw, 320px); aspect-ratio: 1.586;
+    border-radius: 16px; padding: 16px 18px; text-decoration: none; color: #fff; text-align: left; margin: 6px 0 10px;
+    box-shadow: 0 14px 40px rgba(0,0,0,.7), inset 0 0 0 3px rgba(255,255,255,.3); position: relative; overflow: hidden;
+    transform: rotateY(90deg) scale(.6); transition: transform .7s cubic-bezier(.2,1.4,.4,1); }
+  .giftcard.in { transform: none; }
+  a.giftcard.in { animation: pulse 1.8s ease-in-out .8s infinite; }
+  .giftcard.small { width: min(68vw, 250px); padding: 12px 14px; margin: 2px 0 6px; }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 14px 40px rgba(0,0,0,.7), inset 0 0 0 3px rgba(255,255,255,.3); }
+    50% { box-shadow: 0 14px 60px rgba(255,226,58,.55), inset 0 0 0 3px rgba(255,255,255,.7); } }
+  .giftcard::after { content: ''; position: absolute; top: -60%; left: -80%; width: 60%; height: 220%; transform: rotate(25deg);
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.35), rgba(255,255,255,0)); animation: shine 2.6s ease-in-out 1s infinite; }
+  @keyframes shine { 0% { left: -80%; } 40%, 100% { left: 130%; } }
+  .giftcard.cfa { background: linear-gradient(135deg, #e51636 0%, #b0122a 60%, #7d0d1e 100%); }
+  .giftcard.ws { background: linear-gradient(135deg, #0c8a44 0%, #0a5d30 60%, #06381d 100%); }
+  .gc-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .gc-brand { font-size: clamp(13px, 4.6vw, 19px); line-height: 1.3; text-shadow: 2px 2px 0 rgba(0,0,0,.4); }
+  .giftcard.small .gc-brand { font-size: clamp(11px, 3.8vw, 15px); }
+  .gc-type { font-size: 7px; opacity: .85; margin-top: 4px; }
+  .gc-chip { width: 34px; height: 26px; border-radius: 5px; background: linear-gradient(135deg, #ffe98a, #c9a227); box-shadow: inset 0 0 0 2px rgba(0,0,0,.25); }
+  .giftcard.small .gc-chip { width: 26px; height: 20px; }
+  .gc-amt { font-size: clamp(26px, 9vw, 40px); text-shadow: 3px 3px 0 rgba(0,0,0,.45); }
+  .giftcard.small .gc-amt { font-size: clamp(20px, 7vw, 30px); }
+  .gc-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+  .gc-name { font-size: 8px; opacity: .9; }
+  .gc-tap { font-size: 9px; background: #fff; color: #222; padding: 6px 8px; border-radius: 4px; animation: blink 1.2s steps(2, start) infinite; }
+  .giftcard.small .gc-tap { font-size: 7px; padding: 5px 6px; }
+
+  /* ---------- unlock / glitch ---------- */
+  #s-unlock { background: #000; }
+  body.glitching #ui { animation: shake .08s linear infinite; }
+  body.glitching #game { filter: invert(1) hue-rotate(90deg); }
+  @keyframes shake { 0% { transform: translate(2px, -3px); } 25% { transform: translate(-4px, 2px); } 50% { transform: translate(3px, 4px); } 75% { transform: translate(-2px, -2px); } 100% { transform: translate(4px, 1px); } }
+  .glitchtext { animation: glitchcol .12s steps(1) infinite; }
+  @keyframes glitchcol { 0% { color: #ff004c; transform: skewX(8deg); } 33% { color: #00ffd5; transform: skewX(-10deg) translateX(4px); } 66% { color: #ffe23a; transform: none; } }
+
+  /* ---------- on-screen controls ---------- */
+  #controls { position: fixed; left: 0; right: 0; bottom: 0; height: var(--ctrl-h, 20vh); display: none; pointer-events: none;
+    padding: 0 14px calc(14px + env(safe-area-inset-bottom)); align-items: flex-end; justify-content: space-between; }
+  #controls.on { display: flex; }
+  .dpad { display: flex; gap: 12px; }
+  .btn { pointer-events: auto; width: 78px; height: 78px; border-radius: 14px; border: 3px solid #fff; background: rgba(0, 0, 0, .38);
+    color: #fff; font-family: inherit; font-size: 15px; display: flex; align-items: center; justify-content: center; padding: 0;
+    box-shadow: 0 5px 0 rgba(0,0,0,.55); touch-action: none; }
+  .btn svg { width: 34px; height: 34px; fill: #fff; shape-rendering: crispEdges; pointer-events: none; }
+  .btn.active { background: rgba(255,255,255,.4); transform: translateY(4px); box-shadow: none; }
+  #btn-jump { width: 96px; height: 96px; border-radius: 50%; background: rgba(227,52,47,.62); }
+  #btn-jump.active { background: rgba(255,120,110,.85); }
+  #btn-music { position: fixed; top: calc(8px + env(safe-area-inset-top)); right: 10px; width: 38px; height: 38px; border-radius: 8px; border: 2px solid #fff;
+    background: rgba(0,0,0,.4); display: none; align-items: center; justify-content: center; padding: 0; pointer-events: auto; touch-action: manipulation; z-index: 5; }
+  #btn-music.on { display: flex; }
+  #btn-music svg { width: 22px; height: 22px; fill: #fff; shape-rendering: crispEdges; pointer-events: none; }
+  #btn-music.muted svg { opacity: .45; }
+  #btn-music.muted::after { content: ''; position: absolute; left: 6px; right: 6px; top: 50%; height: 3px; background: #e3342f; transform: rotate(-40deg); }
+  @media (prefers-reduced-motion: reduce) { .bob, .rainbow, .blink, .gc-tap, .giftcard::after { animation: none; } }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="ui">
+  <!-- TITLE -->
+  <div class="screen on dim-light" id="s-title">
+    <canvas class="bighead bob" id="title-head" width="64" height="80" aria-hidden="true"></canvas>
+    <h1 class="rainbow">HAPPY<br>BIRTHDAY<br><span class="name">LEVI</span>!</h1>
+    <p class="sub">A VERY IMPORTANT VIDEO GAME</p>
+    <button class="pbtn blink" id="btn-start">TAP TO START</button>
+    <div class="row" style="margin-top:14px">
+      <button class="pbtn small" id="btn-bonus" hidden>BONUS ROUND</button>
+      <button class="pbtn small" id="btn-prizes" hidden>MY PRIZES</button>
+    </div>
+    <p class="tiny" style="margin-top:22px">TURN YOUR SOUND ON!</p>
+  </div>
+
+  <!-- LEVEL 1 INTRO -->
+  <div class="screen dim" id="s-intro1">
+    <div class="card">
+      <h2>LEVEL 1</h2>
+      <h3>BIRTHDAY BOULEVARD</h3>
+      <p><span class="name">Levi</span> is turning <b>16</b>!</p>
+      <p>His present is waiting at the end of Birthday Boulevard...</p>
+      <p>...but he doesn't have his license yet, so he has to <b>RUN</b>.</p>
+      <p class="hint">Collect all <b>16</b> candles.<br>Stomp the grumpy traffic cones.<br>Don't fall in the holes.</p>
+      <button class="pbtn" id="btn-go1">LET'S GO!</button>
+    </div>
+  </div>
+
+  <!-- PRIZE 1 -->
+  <div class="screen dim" id="s-reveal1">
+    <h2 class="rainbow">YOU MADE IT!</h2>
+    <p>16 years. 16 candles.<br>One extremely large head.</p>
+    <p class="sub">YOUR PRESENT:</p>
+    <div id="cards-1"></div>
+    <button class="pbtn" id="btn-cont1">CONTINUE</button>
+  </div>
+
+  <!-- LEVEL 2 INTRO: THE AIRPODS INCIDENT -->
+  <div class="screen dim" id="s-intro3">
+    <div class="card">
+      <h2>LEVEL 2</h2>
+      <h3>THE AIRPODS INCIDENT</h3>
+      <p>Wait. Where are <span class="name">Levi</span>'s AirPods?</p>
+      <p>Oh no. Someone <b>STOLE</b> them.</p>
+      <p class="hint">TAP as fast as you can to run.<br>Catch that thief!</p>
+      <button class="pbtn" id="btn-go3">GET HIM!</button>
+    </div>
+  </div>
+
+  <!-- HE GOT AWAY -->
+  <div class="screen" id="s-gotaway">
+    <div class="card">
+      <h2>HE GOT AWAY.</h2>
+      <p>(Yes. This is historically accurate.)</p>
+      <p class="hint">There is only one thing left to do.</p>
+      <button class="pbtn" id="btn-store">TO THE APPLE STORE</button>
+    </div>
+  </div>
+
+  <!-- APPLE STORE -->
+  <div class="screen" id="s-store">
+    <div class="card light">
+      <h3>APPLE STORE</h3>
+      <p id="store-text">GENIUS: Welcome in! Did you lose your AirPods?</p>
+      <button class="pbtn" id="btn-store-next">THEY WERE STOLEN</button>
+    </div>
+  </div>
+
+  <!-- FAKE ENDING, THEN THE UNLOCK -->
+  <div class="screen" id="s-unlock">
+    <div id="unlock-fake">
+      <h2>THANKS FOR PLAYING!</h2>
+      <p class="sub">THE END</p>
+      <p class="tiny">(c) <span class="name">LEVI</span> CORP.</p>
+    </div>
+    <div id="unlock-real" hidden>
+      <h2 class="glitchtext">!!! SECRET !!!<br>BONUS ROUND<br>UNLOCKED</h2>
+      <button class="pbtn" id="btn-go2">WAIT, WHAT?!</button>
+    </div>
+  </div>
+
+  <!-- BONUS INTRO -->
+  <div class="screen dim" id="s-intro2">
+    <div class="card">
+      <h2>BONUS ROUND</h2>
+      <h3>FLIGHT SCHOOL</h3>
+      <p>Now that <span class="name">Levi</span> is 16, he can finally <b>DRIVE</b>.</p>
+      <p>Unfortunately, nobody told him this car can also <b>FLY</b>.</p>
+      <p class="hint">TAP anywhere to flap.<br>Fly through <b>16</b> gates.<br>You have 5 hearts. Try not to crash.</p>
+      <button class="pbtn" id="btn-fly">START ENGINE</button>
+    </div>
+  </div>
+
+  <!-- CRASH -->
+  <div class="screen dim" id="s-crash">
+    <div class="card">
+      <h2>CRASH!</h2>
+      <p>Good thing this is a video game and not your driving test.</p>
+      <button class="pbtn" id="btn-retry">TRY AGAIN</button>
+    </div>
+  </div>
+
+  <!-- PRIZE 2 -->
+  <div class="screen dim" id="s-reveal2">
+    <h2 class="rainbow">YOU EARNED<br>YOUR WINGS!</h2>
+    <p>...and speaking of wings:</p>
+    <div id="cards-2"></div>
+    <button class="pbtn" id="btn-cont2">CONTINUE</button>
+  </div>
+
+  <!-- FINAL -->
+  <div class="screen dim" id="s-final">
+    <h2 class="rainbow">HAPPY 16TH<br>BIRTHDAY<br><span class="name">LEVI</span>!</h2>
+    <div class="cards" id="cards-final"></div>
+    <p class="tiny">(tap a card to open your e-gift card)</p>
+    <div class="signoff"><canvas id="mike-head" class="minihead bob" width="56" height="78" aria-hidden="true"></canvas><p class="sub" id="final-from"></p></div>
+    <button class="pbtn small ghost" id="btn-again">PLAY AGAIN</button>
+  </div>
+
+  <!-- PRIZE WALLET (reachable from the title once unlocked, so the links are never lost) -->
+  <div class="screen dim" id="s-prizes">
+    <h2>YOUR PRIZES</h2>
+    <div class="cards" id="cards-wallet"></div>
+    <p class="tiny" id="prizes-locked" hidden>Beat the bonus round to unlock prize #2!</p>
+    <button class="pbtn small ghost" id="btn-prizes-back">BACK</button>
+  </div>
+</div>
+
+<button id="btn-music" aria-label="Music on/off"><svg viewBox="0 0 8 8"><path d="M4 0h1v8H4zM3 1h1v6H3zM0 2h3v4H0zM6 2h1v1H6zM7 3h1v2H7zM6 5h1v1H6z"/></svg></button>
+
+<div id="controls">
+  <div class="dpad">
+    <button class="btn" id="btn-left" aria-label="Left"><svg viewBox="0 0 7 7"><path d="M6 0h1v7H6zM4 1h2v5H4zM2 2h2v3H2zM0 3h2v1H0z"/></svg></button>
+    <button class="btn" id="btn-right" aria-label="Right"><svg viewBox="0 0 7 7"><path d="M0 0h1v7H0zM1 1h2v5H1zM3 2h2v3H3zM5 3h2v1H5z"/></svg></button>
+  </div>
+  <button class="btn" id="btn-jump">JUMP</button>
+</div>
+
+<script src="config.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
